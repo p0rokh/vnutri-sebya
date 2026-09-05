@@ -97,9 +97,9 @@ a:hover { text-decoration: underline; }
 img, svg { display: block; max-width: 100%; }
 button { font: inherit; cursor: pointer; }
 .muted { color: var(--ink-soft); }
-.container { max-width: var(--container); margin: 0 auto; padding: 0 20px; }
-.section { padding: clamp(72px, 10vw, 112px) 0; position: relative; }
-.section--tight { padding: clamp(44px, 6vw, 64px) 0; }
+.container { max-width: var(--container); margin: 0 auto; padding-inline: 20px; }
+.section { padding-block: clamp(72px, 10vw, 112px); position: relative; }
+.section--tight { padding-block: clamp(44px, 6vw, 64px); }
 .center { text-align: center; }
 :focus-visible { outline: 2px solid var(--sage-deep); outline-offset: 2px; border-radius: 4px; }
 [hidden] { display: none !important; }
@@ -538,6 +538,10 @@ fieldset { border: 0; padding: 0; margin: 0; }
 .reveal.in-view { opacity: 1; transform: none; }
 
 /* ---------- Адаптив ---------- */
+@media (max-width: 1200px) {
+  /* полоса 1160px не влезает — margin:auto схлопывается в 0, поля держим явно */
+  .hero, .dark-cta { margin-inline: 20px; }
+}
 @media (max-width: 900px) {
   .nav {
     display: none;
@@ -557,14 +561,13 @@ fieldset { border: 0; padding: 0; margin: 0; }
   .grid--4 { grid-template-columns: repeat(2, 1fr); }
   .grid--3 { grid-template-columns: repeat(2, 1fr); }
   .trust-row { grid-template-columns: 1fr; }
-  .dark-cta { flex-direction: column; align-items: flex-start; margin-left: 20px; margin-right: 20px; }
+  .dark-cta { flex-direction: column; align-items: flex-start; }
   .sprig { width: 70px; }
 }
 @media (max-width: 600px) {
   body { font-size: 16px; }
   .badge { font-size: 11px; letter-spacing: .03em; white-space: normal; text-align: left; max-width: 100%; }
   .grid--4, .grid--3, .grid--2 { grid-template-columns: 1fr; }
-  .hero { margin-left: 0; margin-right: 0; }
   .quiz-nav { flex-direction: column-reverse; }
   .quiz-nav .btn { width: 100%; }
   .result-actions { flex-direction: column; }
