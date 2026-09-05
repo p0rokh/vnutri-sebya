@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>PROBE RUNNING</title></head>
+<body style="margin:0">
+<!-- Проверка попапа «Куда обратиться»: открытие/закрытие + сохранность страницы «Помощь». -->
+<iframe id="f1" src="../site/index.html" style="width:1280px; height:900px; border:0"></iframe>
+<iframe id="f2" src="../site/help.html" style="width:1280px; height:900px; border:0"></iframe>
+<script>
+"use strict";
+var checks = [], pending = 2;
+function ok(name, cond) { checks.push((cond ? "PASS " : "FAIL ") + name); }
+function done() {
+  if (--pending) return;
+  var failed = checks.filter(function (c) { return c.indexOf("FAIL") === 0; });
+  document.title = (failed.length ? "POPUP-FAIL " : "POPUP-PASS ") + checks.length + " checks; " + failed.join("; ");
+}
+
+document.getElementById("f1").addEventListener("load", function () {
+  var w = this.contentWindow, d = w.document;
+  var link = d.querySelector('.dark-cta a[href$="help.html#contacts"]');
+  ok("ссылка-фоллбэк на месте", !!link && link.getAttribute("href") === "help.html#contacts");
+  var modal = d.getElementById("contacts-modal");
+  ok("модалка вставлена и скрыта", !!modal && modal.hidden);
+  link.click();
+  ok("клик открывает попап (страница не ушла)", !modal.hidden && w.location.pathname.indexOf("index.html") !== -1);
+  ok("в попапе телефон доверия", modal.textContent.indexOf("8-800-2000-122") !== -1);
+  ok("в попапе 112 и МЧС", modal.textContent.indexOf("112") !== -1 && modal.textContent.indexOf("989-50-50") !== -1);
+  d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+  ok("Esc закрывает", modal.hidden);
+  link.click();
+  modal.dispatchEvent(new w.MouseEvent("click", { bubbles: true })); // клик по подложке
+  ok("клик по фону закрывает", modal.hidden);
+  link.click();
+  d.getElementById("cm-close").click();
+  ok("крестик закрывает", modal.hidden);
+  done();
+});
+
+document.getElementById("f2").addEventListener("load", function () {
+  var d = this.contentWindow.document;
+  var section = d.getElementById("contacts");
+  ok("раздел #contacts на «Помощи» остался", !!section && section.textContent.indexOf("8-800-2000-122") !== -1);
+  ok("на «Помощи» попап не вставлен (нет ссылок на #contacts)", !d.getElementById("contacts-modal"));
+  done();
+});
+</script>
+</body>
+</html>

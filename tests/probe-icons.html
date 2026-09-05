@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>PROBE RUNNING</title></head>
+<body style="margin:0">
+<iframe id="f1" src="../site/test.html" style="width:1280px; height:900px; border:0"></iframe>
+<iframe id="f2" src="../site/help.html" style="width:1280px; height:900px; border:0"></iframe>
+<iframe id="f3" src="../site/index.html" style="width:1280px; height:900px; border:0"></iframe>
+<script>
+"use strict";
+var results = [], pending = 3;
+
+function measure(win, sel, name) {
+  var d = win.document;
+  var chip = d.querySelector(sel);
+  var svg = chip.querySelector("svg");
+  var cs = win.getComputedStyle(chip);
+  var cr = chip.getBoundingClientRect();
+  var sr = svg.getBoundingClientRect();
+  var centered = Math.abs((sr.left - cr.left) - (cr.width - sr.width) / 2) < 1.5 &&
+                 Math.abs((sr.top - cr.top) - (cr.height - sr.height) / 2) < 1.5;
+  results.push((cs.display === "flex" && centered ? "PASS " : "FAIL ") + name +
+    "(" + cs.display + "," + Math.round(cr.width) + "px,off=" +
+    Math.round(sr.left - cr.left) + "," + Math.round(sr.top - cr.top) + ")");
+}
+
+function done() {
+  if (--pending) return;
+  var failed = results.filter(function (r) { return r.indexOf("FAIL") === 0; });
+  document.title = (failed.length ? "ICONS-FAIL " : "ICONS-PASS ") + results.join("; ");
+}
+
+document.getElementById("f1").addEventListener("load", function () {
+  var w = this.contentWindow, d = w.document;
+  d.getElementById("q-start").click();
+  for (var i = 0; i < 29; i++) {
+    var inputs = d.querySelectorAll("#q-options .option input");
+    inputs[inputs.length - 1].click();
+    d.getElementById("q-next").click();
+  }
+  measure(w, "#r-contacts .icon-chip", "тест-результат");
+  done();
+});
+document.getElementById("f2").addEventListener("load", function () {
+  measure(this.contentWindow, "#contacts .contact-card .icon-chip", "help-контакты");
+  measure(this.contentWindow, ".trust .icon-chip", "help-trust");
+  done();
+});
+document.getElementById("f3").addEventListener("load", function () {
+  measure(this.contentWindow, ".trust .icon-chip", "index-trust");
+  done();
+});
+</script>
+</body>
+</html>
