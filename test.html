@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Самопроверка — Внутри себя</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="header-wrap">
+  <header class="site-header">
+    <a class="logo" href="index.html" aria-label="Внутри себя — на главную">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M16 27 C 8 22, 5 15, 7 7 C 15 6, 23 9, 25 17 C 26 22, 22 26, 16 27 Z"/>
+        <path d="M10 22 C 14 18, 18 14, 22 11"/>
+      </svg>
+      <span>Внутри себя</span>
+    </a>
+    <nav class="nav" aria-label="Основное меню">
+      <a href="about.html">О РПП</a>
+      <a href="test.html" class="is-active">Тест</a>
+      <a href="recommendations.html">Рекомендации</a>
+      <a href="help.html">Помощь</a>
+      <a href="articles.html">Статьи</a>
+    </nav>
+    <a class="btn btn--primary btn--pill" href="test.html">Пройти тест</a>
+    <button class="burger" aria-expanded="false" aria-label="Открыть меню">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16"/>
+      </svg>
+    </button>
+  </header>
+</div>
+
+<main class="section--tight container page-hero">
+  <div class="quiz-wrap">
+
+    <!-- Экран 1: интро -->
+    <section class="screen screen--intro" id="scr-intro" aria-labelledby="intro-h">
+      <div class="hero mist grain" style="margin:0; max-width:none">
+        <svg class="sprig sprig--tr" width="96" height="114" viewBox="0 0 110 130" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M55 126 C 52 92, 57 52, 54 6"/>
+          <path d="M54 34 C 42 30, 34 20, 35 8 C 47 11, 54 21, 54 34 Z"/>
+          <path d="M55 62 C 67 58, 74 48, 73 36 C 61 39, 55 49, 55 62 Z"/>
+          <path d="M54 92 C 42 88, 34 78, 35 66 C 47 69, 54 79, 54 92 Z"/>
+        </svg>
+        <h1 id="intro-h">Самопроверка</h1>
+        <p class="lead">Этот тест помогает лучше понять своё эмоциональное и пищевое поведение. Он не ставит диагноз и не заменяет консультацию специалиста.</p>
+        <div class="quiz-meta">
+          <span class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+            Займёт 10–15 минут
+          </span>
+          <span class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.2 8.4-7 10-3.8-1.6-7-5-7-10V6z"/></svg>
+            Анонимно: ответы не сохраняются и никуда не отправляются
+          </span>
+          <span class="meta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21 C 7 18, 4.5 13.5, 6 7.5 C 12 7, 17 9.5, 18 15 C 18.7 18.5, 16 20.5, 12 21 Z"/><path d="M8.5 17.5 C 11 15, 13.5 12.5, 16 10.5"/></svg>
+            Только для самопонимания
+          </span>
+        </div>
+        <p class="muted" style="font-size:14.5px; margin-top:16px">Некоторые вопросы личные. Отвечай честно — так результат будет точнее. Если обновить страницу, прогресс начнётся заново.</p>
+        <div class="actions">
+          <button class="btn btn--primary" id="q-start">Начать тест <span class="arr">→</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Экран 2: вопросы -->
+    <section class="screen" id="scr-quiz" hidden aria-label="Вопросы теста">
+      <div class="quiz-card">
+        <div class="quiz-progress">
+          <span class="quiz-progress__text">Вопрос <b id="q-num">1</b> из 29</span>
+          <div class="quiz-progress__track" role="progressbar" aria-label="Прогресс теста" aria-valuemin="1" aria-valuemax="29" aria-valuenow="1">
+            <div class="quiz-progress__fill" id="q-fill"></div>
+          </div>
+          <span class="quiz-progress__pct" id="q-pct">3%</span>
+          <button class="btn btn--ghost" id="q-exit" type="button">Выйти из теста</button>
+        </div>
+        <form id="q-form">
+          <fieldset>
+            <legend class="quiz-question" id="q-text"></legend>
+            <div class="quiz-options" id="q-options"></div>
+          </fieldset>
+        </form>
+        <aside class="remember" style="margin-top:22px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none; margin-top:3px; color:#6b64a8" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/></svg>
+          <span><b>Важно помнить.</b> Честные ответы помогут получить более точный результат и рекомендации, которые действительно могут быть полезны.</span>
+        </aside>
+        <div class="quiz-nav">
+          <button class="btn btn--secondary" id="q-back" type="button">Назад</button>
+          <button class="btn btn--primary" id="q-next" type="button" disabled>Далее <span class="arr">→</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Экран 3: результат -->
+    <section class="screen screen--result" id="scr-result" hidden aria-labelledby="r-title">
+      <div class="quiz-card">
+        <div class="center" style="margin-bottom:8px">
+          <h2 style="font-size:clamp(24px,3vw,30px)">Ваш результат</h2>
+          <p class="muted" style="max-width:36em; margin:0 auto">Спасибо, что прошёл(ла) тест. Это важный шаг к тому, чтобы лучше понять себя и позаботиться о своём состоянии. Помни: этот тест не ставит диагноз и не заменяет консультацию специалиста.</p>
+        </div>
+
+        <div class="level-hero">
+          <span class="icon-chip" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-9-9c-1.3-3 .8-6.5 4-6.5 2 0 3.7 1.2 5 3 1.3-1.8 3-3 5-3 3.2 0 5.3 3.5 4 6.5-2 4.5-9 9-9 9z"/></svg>
+          </span>
+          <p class="kicker">Уровень:</p>
+          <h1 id="r-title"></h1>
+          <p class="sub" id="r-sub"></p>
+        </div>
+
+        <div class="note note--level" id="r-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21 C 7 18, 4.5 13.5, 6 7.5 C 12 7, 17 9.5, 18 15 C 18.7 18.5, 16 20.5, 12 21 Z"/><path d="M8.5 17.5 C 11 15, 13.5 12.5, 16 10.5"/></svg>
+          <span id="r-note-text"></span>
+        </div>
+
+        <div class="r-card">
+          <div><span class="r-number" id="r-num">0.00</span> <span class="r-of">из 4</span></div>
+          <p class="muted" style="font-size:14.5px">Показатель R = 0.25·F1 + 0.25·F2 + 0.3·F3 + 0.2·F4</p>
+          <div class="factor-bars" id="r-bars">
+            <div class="factor-bar" data-factor="F1">
+              <span class="factor-bar__name">F1 · Когнитивные установки</span>
+              <span class="factor-bar__value">0.00</span>
+              <div class="factor-bar__track"><div class="factor-bar__fill"></div></div>
+            </div>
+            <div class="factor-bar" data-factor="F2">
+              <span class="factor-bar__name">F2 · Образ тела и самооценка</span>
+              <span class="factor-bar__value">0.00</span>
+              <div class="factor-bar__track"><div class="factor-bar__fill"></div></div>
+            </div>
+            <div class="factor-bar" data-factor="F3">
+              <span class="factor-bar__name">F3 · Пищевое поведение</span>
+              <span class="factor-bar__value">0.00</span>
+              <div class="factor-bar__track"><div class="factor-bar__fill"></div></div>
+            </div>
+            <div class="factor-bar" data-factor="F4">
+              <span class="factor-bar__name">F4 · Внешние факторы</span>
+              <span class="factor-bar__value">0.00</span>
+              <div class="factor-bar__track"><div class="factor-bar__fill"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="center" style="margin-top:30px">Что это значит?</h3>
+        <div class="grid grid--3" id="r-cards" style="margin-top:18px"></div>
+
+        <aside class="remember" style="margin-top:26px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none; margin-top:3px; color:#6b64a8" aria-hidden="true"><path d="M12 13.5s-3.5-2.2-4.5-4.4C6.8 7.6 7.9 6 9.4 6c1 0 1.9.6 2.6 1.5.7-.9 1.6-1.5 2.6-1.5 1.5 0 2.6 1.6 1.9 3.1-1 2.2-4.5 4.4-4.5 4.4z"/><path d="M4 15.5c1.5-1 3-1 4.3-.2l2.4 1.4c1 .6 1 1.9-.1 2.4M20 15.5c-1.5-1-3-1-4.3-.2l-2.4 1.4c-1 .6-1 1.9.1 2.4l.9.5c1.2.6 2.6.6 3.7-.2l2-1.4"/></svg>
+          <span><b>Важно помнить.</b> <span id="r-remember"></span></span>
+        </aside>
+
+        <div id="r-contacts" hidden>
+          <h3 class="center" style="margin-top:30px">Куда обратиться за помощью</h3>
+          <div class="grid grid--3" style="margin-top:18px">
+            <div class="contact-card">
+              <span class="icon-chip icon-chip--round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.8 4.5h3l1.5 4-2 1.5a12 12 0 0 0 4.7 4.7l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.8 6.7a2 2 0 0 1 2-2.2z"/></svg>
+              </span>
+              <div>
+                <b>Детский телефон доверия</b>
+                <a class="tel" href="tel:88002000122">8-800-2000-122</a>
+                <span>Бесплатно и анонимно, для детей, подростков и родителей</span>
+              </div>
+            </div>
+            <div class="contact-card">
+              <span class="icon-chip icon-chip--round icon-chip--sky" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5v-5a8 8 0 0 1 16 0v5"/><rect x="3" y="14" width="4.5" height="6.5" rx="2"/><rect x="16.5" y="14" width="4.5" height="6.5" rx="2"/></svg>
+              </span>
+              <div>
+                <b>Психологическая помощь МЧС</b>
+                <a class="tel" href="tel:+74959895050">+7 (495) 989-50-50</a>
+                <span>Круглосуточно · онлайн-помощь: psi.mchs.gov.ru</span>
+              </div>
+            </div>
+            <div class="contact-card">
+              <span class="icon-chip icon-chip--round icon-chip--sand" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l8.5 14.5H3.5z"/><path d="M12 10v4M12 16.8v.2"/></svg>
+              </span>
+              <div>
+                <b>Экстренные службы</b>
+                <a class="tel" href="tel:112">112</a>
+                <span>Если есть опасность для жизни — звони сразу</span>
+              </div>
+            </div>
+          </div>
+          <p class="muted center" style="font-size:14.5px; margin-top:14px">Также можно поговорить со школьным психологом или взрослым, которому ты доверяешь.</p>
+        </div>
+
+        <h3 class="center whats-next" style="margin-top:30px">Что дальше?</h3>
+        <div class="grid grid--3 whats-next" style="margin-top:18px">
+          <a class="card card--hover" href="recommendations.html">
+            <span class="icon-chip icon-chip--sand" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18v-1.6c0-.8-.5-1.5-1.1-2.1A5.9 5.9 0 0 1 6 9.9 6 6 0 0 1 18 10c0 1.7-.8 3.2-2.4 4.4-.6.5-1.1 1.2-1.1 2V18"/><path d="M9.5 21h5"/></svg>
+            </span>
+            <h3>Посмотреть рекомендации</h3>
+            <p class="muted">Простые советы для баланса и заботы о себе каждый день.</p>
+          </a>
+          <a class="card card--hover" href="help.html">
+            <span class="icon-chip icon-chip--lilac" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13.5s-3.5-2.2-4.5-4.4C6.8 7.6 7.9 6 9.4 6c1 0 1.9.6 2.6 1.5.7-.9 1.6-1.5 2.6-1.5 1.5 0 2.6 1.6 1.9 3.1-1 2.2-4.5 4.4-4.5 4.4z"/><path d="M4 15.5c1.5-1 3-1 4.3-.2l2.4 1.4c1 .6 1 1.9-.1 2.4M20 15.5c-1.5-1-3-1-4.3-.2l-2.4 1.4c-1 .6-1 1.9.1 2.4l.9.5c1.2.6 2.6.6 3.7-.2l2-1.4"/></svg>
+            </span>
+            <h3>Техники самопомощи</h3>
+            <p class="muted">Практики, которые помогут справляться со стрессом и тревогой.</p>
+          </a>
+          <a class="card card--hover" href="articles.html">
+            <span class="icon-chip icon-chip--sky" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.6 5 8.8 4.5 6.5 4.5c-1 0-2 .1-2.5.3V19c.5-.2 1.5-.3 2.5-.3 2.3 0 4.1.5 5.5 2 1.4-1.5 3.2-2 5.5-2 1 0 2 .1 2.5.3V4.8c-.5-.2-1.5-.3-2.5-.3-2.3 0-4.1.5-5.5 2z"/><path d="M12 6.5V20.7"/></svg>
+            </span>
+            <h3>Почитать статьи</h3>
+            <p class="muted">Больше о психическом здоровье, питании и поддержке.</p>
+          </a>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn btn--primary" id="q-restart" type="button">Пройти тест заново
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 3v4h-4"/></svg>
+          </button>
+          <button class="btn btn--secondary" id="q-print" type="button">Распечатать результат</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- Модалка выхода -->
+<div class="modal" id="exit-modal" hidden role="dialog" aria-modal="true" aria-labelledby="exit-h">
+  <div class="modal__card">
+    <h3 id="exit-h">Выйти из теста?</h3>
+    <p class="muted">Прогресс не сохранится — ответы будут сброшены.</p>
+    <div class="modal__actions">
+      <a class="btn btn--secondary" href="index.html">Уйти</a>
+      <button class="btn btn--primary" id="exit-stay" type="button">Остаться</button>
+    </div>
+  </div>
+</div>
+
+<section class="dark-cta grain">
+  <div>
+    <h2>Если сейчас тяжело</h2>
+    <p>Ты не один(на). Поддержка рядом, и обращаться за помощью — это смелый и важный шаг к себе.</p>
+  </div>
+  <a class="btn btn--light" href="help.html#contacts">Куда обратиться <span class="arr">→</span></a>
+</section>
+
+<footer class="site-footer">
+  <span>© 2026 «Внутри себя» · проект Алисы Сидельниковой, 8А, Лицей 200</span>
+  <span>Сайт не ставит диагнозы и не заменяет консультацию специалиста</span>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/quiz-ui.js"></script>
+</body>
+</html>
