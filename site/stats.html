@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Статистика — Внутри себя</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .stats { max-width: 980px; margin: 32px auto 80px; padding-inline: 20px; }
+    .stats h1 { font-size: clamp(26px, 3vw, 34px); margin-bottom: 6px; }
+    .stats h2 { font-size: 20px; margin: 40px 0 14px; }
+    .stats h3 { font-size: 16px; margin: 22px 0 8px; }
+    .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 18px; }
+    .tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-inner); padding: 14px 16px; }
+    .tile b { display: block; font-family: var(--font-head); font-size: 26px; font-weight: 600; color: var(--sage-deep); }
+    .tile span { font-size: 13px; color: var(--ink-soft); }
+    .dist { display: grid; grid-template-columns: minmax(140px, 1fr) 3fr auto; gap: 6px 12px; align-items: center; font-size: 14px; }
+    .dist .lbl { color: var(--ink); }
+    .dist .bar { height: 10px; background: var(--sage-mist); border-radius: 999px; overflow: hidden; }
+    .dist .bar i { display: block; height: 100%; background: var(--sage-deep); border-radius: 999px; }
+    .dist .bar.code i { background: #B9C2C8; }
+    .dist .n { color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .qcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-inner); padding: 16px 18px; margin-top: 12px; }
+    .qcard h3 { margin: 0 0 10px; }
+    table.x { border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+    table.x th, table.x td { border: 1px solid var(--line); padding: 6px 10px; text-align: right; }
+    table.x th:first-child, table.x td:first-child { text-align: left; }
+    .toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+    .err { background: #FBE9EC; border-radius: var(--radius-inner); padding: 14px 16px; }
+    .lvl-low { color: #4E8A5F; } .lvl-medium { color: #B58A2A; } .lvl-high { color: #B5484E; }
+  </style>
+</head>
+<body>
+<main class="stats">
+  <p class="kicker muted">Внутри себя · служебная страница</p>
+  <h1>Статистика ответов</h1>
+  <p class="muted" id="s-meta">Загружаю…</p>
+  <div class="toolbar">
+    <a class="btn btn--secondary" href="/api/export.csv">Скачать CSV</a>
+    <button class="btn btn--secondary" id="s-reload" type="button">Обновить</button>
+    <span class="muted" style="font-size:13px">CSV: UTF-8 с BOM, разделитель «;», время в UTC и МСК. В ячейках — индексы вариантов (0 = первый), расшифровка ниже.</span>
+  </div>
+  <div id="s-root"></div>
+</main>
+<script src="js/quiz.js"></script>
+<script src="js/stats.js"></script>
+</body>
+</html>

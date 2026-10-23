@@ -9,3 +9,9 @@ input/
 .claude/
 skills-lock.json
 desing-system/
+
+# Бэкенд статистики: байткод и локальные базы
+__pycache__/
+*.db
+*.db-wal
+*.db-shm

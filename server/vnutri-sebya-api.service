@@ -1,0 +1,22 @@
+[Unit]
+Description=vnutri-sebya results API (anonymous survey results)
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/vnutri-sebya/server/app.py
+Environment=VS_HOST=127.0.0.1
+Environment=VS_PORT=8765
+Environment=VS_DB=/var/lib/vnutri-sebya/results.db
+Environment=VS_ORIGINS=https://insideoneself.orbitalfeed.ru,http://insideoneself.orbitalfeed.ru
+Environment=PYTHONUNBUFFERED=1
+DynamicUser=yes
+StateDirectory=vnutri-sebya
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
