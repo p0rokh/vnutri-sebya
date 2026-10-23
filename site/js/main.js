@@ -13,6 +13,7 @@
   // на странице «Помощь» остаётся; при отключённом JS ссылки работают как раньше.
   var PHONE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.8 4.5h3l1.5 4-2 1.5a12 12 0 0 0 4.7 4.7l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.8 6.7a2 2 0 0 1 2-2.2z"/></svg>';
   var HEADSET_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5v-5a8 8 0 0 1 16 0v5"/><rect x="3" y="14" width="4.5" height="6.5" rx="2"/><rect x="16.5" y="14" width="4.5" height="6.5" rx="2"/></svg>';
+  var CHAT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6.5h14v9H10l-4 3.5v-3.5H5z"/><path d="M8.5 11h7"/></svg>';
   var ALERT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l8.5 14.5H3.5z"/><path d="M12 10v4M12 16.8v.2"/></svg>';
   var CONTACTS_MODAL_HTML =
     '<div class="modal" id="contacts-modal" hidden role="dialog" aria-modal="true" aria-labelledby="cm-h">' +
@@ -30,6 +31,9 @@
           '<div class="contact-card"><span class="icon-chip icon-chip--round icon-chip--sand" aria-hidden="true">' + ALERT_ICON + '</span>' +
             '<div><b>Экстренные службы</b><a class="tel" href="tel:112">112</a>' +
             '<span>Если есть опасность для жизни — звони сразу</span></div></div>' +
+          '<div class="contact-card"><span class="icon-chip icon-chip--round icon-chip--lilac" aria-hidden="true">' + CHAT_ICON + '</span>' +
+            '<div><b>Цифровой психолог на Госуслугах</b><a class="tel" href="https://psy.gosuslugi.ru" rel="noopener" target="_blank">psy.gosuslugi.ru</a>' +
+            '<span>Бесплатные онлайн-консультации психолога через Госуслуги</span></div></div>' +
         '</div>' +
         '<p class="muted" style="font-size:14.5px; margin-bottom:14px">Также можно поговорить со школьным психологом или взрослым, которому ты доверяешь.</p>' +
         '<a class="btn btn--secondary" href="help.html">Техники самопомощи и вся страница «Помощь» <span class="arr">→</span></a>' +
