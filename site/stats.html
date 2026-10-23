@@ -28,6 +28,9 @@
     table.x th:first-child, table.x td:first-child { text-align: left; }
     .toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
     .err { background: #FBE9EC; border-radius: var(--radius-inner); padding: 14px 16px; }
+    .btn-x { background: none; border: 1px solid var(--line); border-radius: 8px; padding: 3px 9px; font: inherit; font-size: 13px; color: var(--ink-soft); cursor: pointer; }
+    .btn-x:hover, .btn-x.is-armed { border-color: #B5484E; color: #B5484E; }
+    .btn--danger.is-armed { border-color: #B5484E; color: #B5484E; }
     .lvl-low { color: #4E8A5F; } .lvl-medium { color: #B58A2A; } .lvl-high { color: #B5484E; }
   </style>
 </head>

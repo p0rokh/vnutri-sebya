@@ -4,6 +4,8 @@
 POST /api/results   — открытый (за nginx limit_req): идемпотентный upsert по клиентскому id
 GET  /api/stats     — сырые строки JSON (за nginx basic auth)
 GET  /api/export.csv— CSV для Excel (за nginx basic auth)
+DELETE /api/admin/results/<id> — удалить одну запись (за nginx basic auth)
+DELETE /api/admin/results      — удалить все записи (за nginx basic auth)
 GET  /api/health    — только локально
 
 Не хранит IP, User-Agent и прочие заголовки. См. docs/Деплой.md.
@@ -232,10 +234,31 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(500, {"error": "storage"})
         return self._json(code, {"ok": True, "id": row["id"]})
 
+    def do_DELETE(self):
+        """Админ-удаление. Доступ ограничивает nginx (basic auth на /api/admin/)."""
+        path = self.path.split("?", 1)[0]
+        if path == "/api/admin/results":
+            sql, args = "DELETE FROM results", ()
+        elif path.startswith("/api/admin/results/") and ID_RE.match(path.rsplit("/", 1)[1]):
+            sql, args = "DELETE FROM results WHERE id = ?", (path.rsplit("/", 1)[1],)
+        else:
+            return self._json(404, {"error": "not found"})
+        try:
+            conn = connect(self.server.db_path)
+            try:
+                with conn:
+                    deleted = conn.execute(sql, args).rowcount
+            finally:
+                conn.close()
+        except sqlite3.Error:
+            self.log_message("sqlite error on delete")
+            return self._json(500, {"error": "storage"})
+        return self._json(200, {"ok": True, "deleted": deleted})
+
     def do_PUT(self):
         self._json(405, {"error": "method"})
 
-    do_DELETE = do_PATCH = do_OPTIONS = do_PUT
+    do_PATCH = do_OPTIONS = do_PUT
 
 
 def make_server(db_path, host="127.0.0.1", port=0, allowed_origins=()):

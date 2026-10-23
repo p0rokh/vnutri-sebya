@@ -96,6 +96,19 @@ class ApiTest(unittest.TestCase):
         self.assertIn("attachment", h.get("Content-Disposition", ""))
         self.assertEqual(self.req("GET", "/api/health")[0], 200)
 
+    def test_delete_one_and_all(self):
+        self.req("POST", "/api/results", valid_payload("1" * 32))
+        self.req("POST", "/api/results", valid_payload("2" * 32))
+        s, body, _ = self.req("DELETE", "/api/admin/results/" + "1" * 32)
+        self.assertEqual((s, json.loads(body)["deleted"]), (200, 1))
+        s, body, _ = self.req("DELETE", "/api/admin/results/" + "1" * 32)
+        self.assertEqual(json.loads(body)["deleted"], 0)
+        self.assertEqual(self.req("DELETE", "/api/admin/results/zzz")[0], 404)
+        self.assertEqual(self.req("DELETE", "/api/results")[0], 404, "открытый путь удалять не умеет")
+        s, body, _ = self.req("DELETE", "/api/admin/results")
+        self.assertEqual(s, 200)
+        self.assertEqual(json.loads(self.req("GET", "/api/stats")[1])["count"], 0)
+
     def test_concurrent_posts(self):
         with ThreadPoolExecutor(max_workers=10) as ex:
             codes = list(ex.map(lambda i: self.req("POST", "/api/results", valid_payload("%032x" % (0xA000 + i)))[0], range(20)))

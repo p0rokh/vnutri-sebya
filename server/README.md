@@ -11,6 +11,9 @@ curl -s 127.0.0.1:8765/api/health
 python3 -m unittest discover -s server -v
 ```
 
+Маршруты: `POST /api/results` (открытый, upsert), `GET /api/stats`, `GET /api/export.csv`,
+`DELETE /api/admin/results` и `DELETE /api/admin/results/<id>` (все за basic auth nginx), `GET /api/health`.
+
 Переменные окружения: `VS_HOST` (127.0.0.1), `VS_PORT` (8765), `VS_DB` (путь к SQLite),
 `VS_ORIGINS` (список разрешённых Origin через запятую; пусто — не проверять).
 

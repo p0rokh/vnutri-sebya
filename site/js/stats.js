@@ -11,6 +11,11 @@
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function pct(n, total) { return total ? Math.round(n / total * 100) : 0; }
+  function optLabel(qid, idx) {
+    var q = QUESTIONS.filter(function (x) { return x.id === qid; })[0];
+    var o = optionsFor(q)[idx];
+    return o ? o.label.replace("Предпочитаю не отвечать", "—") : "?";
+  }
   function fmtDate(iso) { try { return new Date(iso).toLocaleString("ru-RU"); } catch (e) { return iso; } }
 
   // Распределение: items = [{label, n, code?}]
@@ -72,6 +77,17 @@
       '<div class="tile"><b>' + rated + "</b><span>оценили проект · " + pct(rated, n) + "%</span></div>" +
       "</div>";
 
+    html += '<h2 id="s-list">Все записи <span class="muted" style="font-weight:400;font-size:15px">(' + n + ")</span></h2>" +
+      '<div class="toolbar" style="margin:0 0 10px"><button class="btn btn--secondary btn--danger" type="button" data-del-all="1">Удалить все записи</button></div>' +
+      '<div style="overflow-x:auto"><table class="x"><tr><th>Когда</th><th>R</th><th>Уровень</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th><th>Пол</th><th>Возраст</th><th>q33</th><th></th></tr>' +
+      rows.slice().reverse().map(function (r) {
+        return '<tr data-row="' + r.id + '"><td>' + fmtDate(r.created_at) + "</td><td>" + r.r.toFixed(2) + '</td><td class="lvl-' + r.level + '">' + LEVEL_LABEL[r.level] + "</td>" +
+          ["f1", "f2", "f3", "f4"].map(function (k) { return "<td>" + r[k].toFixed(2) + "</td>"; }).join("") +
+          "<td>" + esc(optLabel(1, r.q1)) + "</td><td>" + esc(optLabel(2, r.q2)) + "</td>" +
+          "<td>" + (r.q33 === null ? "—" : r.q33 + 1) + "</td>" +
+          '<td><button class="btn-x" type="button" data-del="' + r.id + '" title="Удалить запись">Удалить</button></td></tr>';
+      }).join("") + "</table></div>";
+
     html += "<h2>Средние по факторам (из 5)</h2>" + '<div class="dist">' + ["f1", "f2", "f3", "f4"].map(function (k) {
       var m = mean(k);
       return '<span class="lbl">' + FACTOR_LABEL[k.toUpperCase()] + "</span>" +
@@ -90,13 +106,6 @@
       return questionDist(q, rows);
     }).join("");
 
-    html += "<h2>Последние 20 ответов</h2><table class=\"x\"><tr><th>Когда</th><th>R</th><th>Уровень</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th><th>q33</th></tr>" +
-      rows.slice(-20).reverse().map(function (r) {
-        return "<tr><td>" + fmtDate(r.created_at) + "</td><td>" + r.r.toFixed(2) + '</td><td class="lvl-' + r.level + '">' + LEVEL_LABEL[r.level] + "</td>" +
-          ["f1", "f2", "f3", "f4"].map(function (k) { return "<td>" + r[k].toFixed(2) + "</td>"; }).join("") +
-          "<td>" + (r.q33 === null ? "—" : r.q33 + 1) + "</td></tr>";
-      }).join("") + "</table>";
-
     root.innerHTML = html;
   }
 
@@ -110,6 +119,42 @@
       root.innerHTML = '<div class="err">Не удалось загрузить данные: ' + esc(e.message) + ". Страница работает только на сервере за паролем.</div>";
     });
   }
+  // Удаление: первый клик — спрашиваем прямо в кнопке, второй — удаляем
+  function armButton(btn, text, onConfirm) {
+    if (btn.getAttribute("data-armed")) { onConfirm(); return; }
+    var old = btn.textContent;
+    btn.setAttribute("data-armed", "1");
+    btn.textContent = text;
+    btn.classList.add("is-armed");
+    setTimeout(function () {
+      btn.removeAttribute("data-armed"); btn.textContent = old; btn.classList.remove("is-armed");
+    }, 4000);
+  }
+  function del(path, done) {
+    fetch(path, { method: "DELETE", cache: "no-store" }).then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    }).then(done).catch(function (e) { alertBox("Не удалось удалить: " + e.message); });
+  }
+  function alertBox(msg) {
+    var box = document.createElement("div");
+    box.className = "err"; box.textContent = msg; box.style.marginTop = "12px";
+    root.insertBefore(box, root.firstChild);
+    setTimeout(function () { box.remove(); }, 6000);
+  }
+  root.addEventListener("click", function (e) {
+    var one = e.target.closest("[data-del]");
+    var all = e.target.closest("[data-del-all]");
+    if (one) {
+      armButton(one, "Точно?", function () {
+        del("/api/admin/results/" + one.getAttribute("data-del"), load);
+      });
+    } else if (all) {
+      armButton(all, "Точно удалить ВСЕ записи? Нажми ещё раз", function () {
+        del("/api/admin/results", load);
+      });
+    }
+  });
   document.getElementById("s-reload").addEventListener("click", load);
   load();
 })();
