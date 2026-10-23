@@ -323,6 +323,10 @@ a.card:hover { text-decoration: none; }
 .hero h1 { max-width: 15em; }
 .hero .lead { max-width: 34em; color: var(--ink-soft); font-size: clamp(16px, 2vw, 18px); }
 .hero .actions { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
+.consent { display: flex; gap: 10px; align-items: flex-start; margin-top: 18px; font-size: 15px; text-align: left; max-width: 36em; cursor: pointer; }
+.consent input { margin-top: 4px; flex: none; width: 18px; height: 18px; accent-color: var(--sage-deep); }
+.r-rating .quiz-options { text-align: left; max-width: 36em; margin: 0 auto; }
+.r-rating .option input:disabled ~ * { opacity: .75; }
 .hero .badge { margin-bottom: 18px; }
 .hero .sprig--tr { top: 22px; right: 26px; }
 .hero .dots--bl { left: 26px; bottom: 22px; }
@@ -353,6 +357,10 @@ a.card:hover { text-decoration: none; }
   transition: width .4s ease-out;
 }
 .quiz-progress__pct { font-size: 14.5px; color: var(--ink-soft); min-width: 38px; }
+.quiz-section {
+  font-size: 13px; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--ink-soft); margin: 0 0 8px;
+}
 .quiz-question {
   font-family: var(--font-head);
   font-weight: 600;

@@ -4,19 +4,22 @@
  * WEIGHTS, computeResult); здесь только экраны, рендер и анимации.
  */
 (function () {
-  var TOTAL = QUESTIONS.length; // 29
+  var TOTAL = QUESTIONS.length; // вопросов до результата (оценка проекта — отдельно)
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Ответы: Map<id, {i: индекс варианта, value: балл}> — индекс нужен,
-  // чтобы «Назад» восстанавливал выбор (у q28 два варианта по 4 балла).
-  var state = { index: 0, answers: new Map() };
+  // Ответы: Map<id, {i: индекс варианта, score: балл или код}> — индекс нужен,
+  // чтобы «Назад» восстанавливал выбор и чтобы отправлять именно индекс.
+  var state = { index: 0, answers: new Map(), result: null, rating: null, submissionId: null };
 
   var els = {
     intro:   document.getElementById("scr-intro"),
     quiz:    document.getElementById("scr-quiz"),
     result:  document.getElementById("scr-result"),
     start:   document.getElementById("q-start"),
+    consent: document.getElementById("q-consent"),
     num:     document.getElementById("q-num"),
+    total:   document.getElementById("q-total"),
+    section: document.getElementById("q-section"),
     fill:    document.getElementById("q-fill"),
     pct:     document.getElementById("q-pct"),
     track:   document.querySelector(".quiz-progress__track"),
@@ -36,16 +39,20 @@
     rCards:  document.getElementById("r-cards"),
     rRemember: document.getElementById("r-remember"),
     rContacts: document.getElementById("r-contacts"),
+    rRatingText: document.getElementById("r-rating-text"),
+    rRatingOptions: document.getElementById("r-rating-options"),
+    rRatingThanks: document.getElementById("r-rating-thanks"),
     restart: document.getElementById("q-restart"),
     print:   document.getElementById("q-print")
   };
 
-  // Мини-иконки настроения для стандартной шкалы (лист → волны → облако → дождь)
+  // Мини-иконки настроения для шкалы 1–5 (лист → волны → облако → дождь → гроза)
   var MOOD_ICONS = {
     1: '<path d="M13 20 C 8 17, 5.5 12.5, 7 6.5 C 13 6, 18 8.5, 19 14 C 19.7 17.5, 17 19.5, 13 20 Z"/><path d="M9.5 16.5 C 12 14, 14.5 11.5, 17 9.5"/>',
     2: '<path d="M4 9c2.5-2 5.5-2 8 0s5.5 2 8 0"/><path d="M4 14c2.5-2 5.5-2 8 0s5.5 2 8 0"/>',
     3: '<path d="M7 17a4 4 0 0 1-.6-7.9 5.5 5.5 0 0 1 10.8-1A4.2 4.2 0 0 1 16.8 17z"/>',
-    4: '<path d="M7 14a4 4 0 0 1-.6-7.9 5.5 5.5 0 0 1 10.8-1A4.2 4.2 0 0 1 16.8 14z"/><path d="M9 17.5v2M13 17.5v2M17 17.5v2"/>'
+    4: '<path d="M7 14a4 4 0 0 1-.6-7.9 5.5 5.5 0 0 1 10.8-1A4.2 4.2 0 0 1 16.8 14z"/><path d="M9 17.5v2M13 17.5v2M17 17.5v2"/>',
+    5: '<path d="M7 13a4 4 0 0 1-.6-7.9 5.5 5.5 0 0 1 10.8-1A4.2 4.2 0 0 1 16.8 13z"/><path d="M13 13l-2.5 4h3l-2 3.5"/>'
   };
 
   // Тексты трёх состояний результата (docs/Аналитика.md §5.4)
@@ -86,7 +93,28 @@
   };
 
   function currentQuestion() { return QUESTIONS[state.index]; }
-  function optionsFor(q) { return q.options || SCALE_DEFAULT; }
+
+  // Разметка вариантов ответа (общая для вопросов и оценки проекта)
+  function renderOptions(q, name, savedIndex) {
+    var html = "";
+    optionsFor(q).forEach(function (opt, i) {
+      var icon = typeof opt.value === "number" && MOOD_ICONS[opt.value];
+      html +=
+        '<label class="option">' +
+          '<input type="radio" name="' + name + '" value="' + i + '"' +
+            (savedIndex === i ? " checked" : "") + ">" +
+          '<span class="option__mark" aria-hidden="true"></span>' +
+          '<span class="option__body">' +
+            '<span class="option__label">' + opt.label + "</span>" +
+            (opt.hint ? '<span class="option__hint">' + opt.hint + "</span>" : "") +
+          "</span>" +
+          (icon
+            ? '<svg class="option__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + icon + "</svg>"
+            : "") +
+        "</label>";
+    });
+    return html;
+  }
 
   function showScreen(el) {
     [els.intro, els.quiz, els.result].forEach(function (s) { s.hidden = (s !== el); });
@@ -110,26 +138,10 @@
     els.pct.textContent = pct + "%";
     els.track.setAttribute("aria-valuenow", String(n));
     els.text.textContent = n + ". " + q.text;
+    els.section.textContent = SECTIONS[q.section] || "";
 
     var saved = state.answers.get(q.id);
-    var html = "";
-    optionsFor(q).forEach(function (opt, i) {
-      var isDefaultScale = !q.options;
-      html +=
-        '<label class="option">' +
-          '<input type="radio" name="q' + q.id + '" value="' + i + '"' +
-            (saved && saved.i === i ? " checked" : "") + ">" +
-          '<span class="option__mark" aria-hidden="true"></span>' +
-          '<span class="option__body">' +
-            '<span class="option__label">' + opt.label + "</span>" +
-            (opt.hint ? '<span class="option__hint">' + opt.hint + "</span>" : "") +
-          "</span>" +
-          (isDefaultScale
-            ? '<svg class="option__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + MOOD_ICONS[opt.value] + "</svg>"
-            : "") +
-        "</label>";
-    });
-    els.options.innerHTML = html;
+    els.options.innerHTML = renderOptions(q, "q" + q.id, saved ? saved.i : -1);
     updateChecked();
 
     els.next.disabled = !saved;
@@ -151,7 +163,7 @@
     var input = els.options.querySelector("input:checked");
     if (!input) return;
     var i = Number(input.value);
-    state.answers.set(q.id, { i: i, value: optionsFor(q)[i].value });
+    state.answers.set(q.id, { i: i, score: scoreOf(optionsFor(q)[i]) });
     updateChecked();
     els.next.disabled = false;
   }
@@ -185,11 +197,53 @@
     requestAnimationFrame(frame);
   }
 
+  // --- отправка результата (анонимно, fire-and-forget; без бэкенда уходит в catch) ---
+  function newId() {
+    var bytes = new Uint8Array(16);
+    if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(bytes);
+    else for (var i = 0; i < 16; i++) bytes[i] = Math.floor(Math.random() * 256);
+    return Array.prototype.map.call(bytes, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+  }
+  function buildPayload() {
+    var answers = {};
+    state.answers.forEach(function (a, id) { answers["q" + id] = a.i; });
+    return {
+      id: state.submissionId, version: QUIZ_VERSION, answers: answers,
+      q33: state.rating, R: state.result.R, level: state.result.level,
+      F: { F1: state.result.factors.F1, F2: state.result.factors.F2,
+           F3: state.result.factors.F3, F4: state.result.factors.F4 }
+    };
+  }
+  function submitResult(payload) {
+    try {
+      fetch("/api/results", {
+        method: "POST", keepalive: true,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(function () {});
+    } catch (e) { /* file:// или старый браузер — результат всё равно показан */ }
+  }
+
+  function onRate() {
+    var input = els.rRatingOptions.querySelector("input:checked");
+    if (!input) return;
+    state.rating = Number(input.value);
+    els.rRatingOptions.querySelectorAll("input").forEach(function (inp) { inp.disabled = true; });
+    els.rRatingOptions.querySelectorAll(".option").forEach(function (o) {
+      o.classList.toggle("is-checked", o.querySelector("input").checked);
+    });
+    els.rRatingThanks.hidden = false;
+    submitResult(buildPayload());
+  }
+
   function showResult() {
     var plain = new Map();
-    state.answers.forEach(function (a, id) { plain.set(id, a.value); });
+    state.answers.forEach(function (a, id) { plain.set(id, a.score); });
     var res = computeResult(plain);
     var txt = RESULT_TEXTS[res.level];
+    state.result = res;
+    state.rating = null;
+    state.submissionId = newId();
 
     els.result.setAttribute("data-level", res.level);
     els.rTitle.textContent = txt.title;
@@ -204,6 +258,9 @@
         "</span><h3 style=\"font-size:17px\">" + c[0] + '</h3><p class="muted">' + c[1] + "</p></div>";
     }).join("");
     els.rContacts.hidden = (res.level !== "high");
+    els.rRatingText.textContent = RATING_QUESTION.text;
+    els.rRatingOptions.innerHTML = renderOptions(RATING_QUESTION, "q33", -1);
+    els.rRatingThanks.hidden = true;
 
     showScreen(els.result);
     animateNumber(els.rNum, res.R, 900);
@@ -214,22 +271,31 @@
       var val = res.factors[f];
       bar.querySelector(".factor-bar__value").textContent = val.toFixed(2);
       var fill = bar.querySelector(".factor-bar__fill");
-      var width = (val / 4 * 100) + "%";
+      var width = (val / 5 * 100) + "%";
       if (reduceMotion) { fill.style.width = width; }
       else setTimeout(function () { fill.style.width = width; }, 250 + i * 120);
     });
+
+    submitResult(buildPayload());
   }
 
   function restart() {
     state.index = 0;
     state.answers = new Map();
+    state.result = null; state.rating = null; state.submissionId = null;
     els.rBars.querySelectorAll(".factor-bar__fill").forEach(function (f) { f.style.width = "0"; });
     els.rNum.textContent = "0.00";
     showScreen(els.intro);
   }
 
   // --- события ---
+  els.total.textContent = String(TOTAL);
+  els.track.setAttribute("aria-valuemax", String(TOTAL));
+  els.start.disabled = !els.consent.checked;
+  els.consent.addEventListener("change", function () { els.start.disabled = !els.consent.checked; });
+  els.rRatingOptions.addEventListener("change", onRate);
   els.start.addEventListener("click", function () {
+    if (!els.consent.checked) return;
     showScreen(els.quiz);
     renderQuestion();
   });
