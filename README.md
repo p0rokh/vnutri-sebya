@@ -16,13 +16,14 @@
 
 Открыть `site/index.html` в браузере — этого достаточно, сайт полностью статический.
 
-Тесты формулы:
+Тесты формулы (node или deno):
 
 ```bash
 node tests/quiz.test.js
+deno run --unstable-detect-cjs --allow-read=. tests/quiz.test.js
 ```
 
-Интеграционный смоук (полное прохождение теста на все три уровня риска):
+Интеграционный смоук (четыре прохождения теста: три уровня риска и проход с пропусками):
 
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new \
